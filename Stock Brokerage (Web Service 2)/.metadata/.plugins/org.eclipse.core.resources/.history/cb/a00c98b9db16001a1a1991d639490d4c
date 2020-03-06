@@ -1,0 +1,157 @@
+package com.example.stockexchange.services;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.google.gson.Gson;
+
+import java.util.LinkedHashMap;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+@Service
+public class RealTimeStockService {
+
+	private String ticker;
+	private String Uri;
+    private static final Logger logger = LogManager.getLogger(RealTimeStockService.class);
+    
+    public JSONObject getMonthlyData(String sym) throws ParseException {
+		// TODO Auto-generated method stub
+		
+		
+		 
+		 RestTemplate template = new RestTemplate();
+		 
+		    ticker = sym;
+	        this.Uri = "https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&apikey=LQFNTUXD4K0LAPGJ&symbol="+ ticker; 
+	    
+	        ResponseEntity<Object> response = template.exchange(Uri, HttpMethod.GET, null, Object.class);
+	        LinkedHashMap<String, LinkedHashMap<String, String>> linkedHashMapLinkedHashMap = (LinkedHashMap<String, LinkedHashMap<String, String>>) response.getBody();
+	        
+	        Gson gson = new Gson();
+	        String jsonstring = gson.toJson(linkedHashMapLinkedHashMap.get("Monthly Time Series"),LinkedHashMap.class);
+
+	        JSONParser myparser = new JSONParser();
+	        JSONObject json = (JSONObject) myparser.parse(jsonstring);
+	        
+	        logger.info("Stock Exchange calls for monthly price to Alpha Vantage ");
+	        logger.info(Uri);
+	        
+	        return json;
+
+		  
+	}
+    
+    public JSONObject getWeeklyData(String sym) throws ParseException {
+		// TODO Auto-generated method stub
+		
+		
+		 
+		 RestTemplate template = new RestTemplate();
+		 
+		    ticker = sym;
+	        this.Uri = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&apikey=LQFNTUXD4K0LAPGJ&symbol=" + ticker; 
+		    
+	        logger.info("Stock Exchange calls for weekly price to Alpha Vantage ");
+	        logger.info(Uri);
+	    
+	        ResponseEntity<Object> response = template.exchange(Uri, HttpMethod.GET, null, Object.class);
+	        LinkedHashMap<String, LinkedHashMap<String, String>> linkedHashMapLinkedHashMap = (LinkedHashMap<String, LinkedHashMap<String, String>>) response.getBody();
+	        
+	        Gson gson = new Gson();
+	        String jsonstring = gson.toJson(linkedHashMapLinkedHashMap.get("Weekly Time Series"),LinkedHashMap.class);
+
+	        JSONParser myparser = new JSONParser();
+	        JSONObject json = (JSONObject) myparser.parse(jsonstring);
+	        return json;
+
+		  
+	}
+
+	
+	
+	
+
+	public JSONObject getDailyData(String sym) throws ParseException{
+		// TODO Auto-generated method stub
+		
+	
+		 
+		 RestTemplate template = new RestTemplate();
+		 
+		    ticker = sym;
+	        this.Uri = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&apikey=LQFNTUXD4K0LAPGJ&symbol=" + ticker; 
+	        logger.info("Stock Exchange calls for Daily price to Alpha Vantage ");
+	        logger.info(Uri);
+	    
+	        ResponseEntity<Object> response = template.exchange(Uri, HttpMethod.GET, null, Object.class);
+	        LinkedHashMap<String, LinkedHashMap<String, String>> linkedHashMapLinkedHashMap = (LinkedHashMap<String, LinkedHashMap<String, String>>) response.getBody();
+	        
+	        Gson gson = new Gson();
+	        String jsonstring = gson.toJson(linkedHashMapLinkedHashMap.get("Time Series (Daily)"),LinkedHashMap.class);
+
+	        JSONParser myparser = new JSONParser();
+	        JSONObject json = (JSONObject) myparser.parse(jsonstring);
+	        return json;
+		
+	}
+
+public JSONObject getIntradayData(String sym) throws ParseException{
+		
+		
+		
+		RestTemplate template = new RestTemplate();
+		 
+	    ticker = sym;
+	    
+        this.Uri = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&interval=60min&apikey=LQFNTUXD4K0LAPGJ&symbol=" + ticker; 
+        logger.info("Stock Exchange calls for Intraday price to Alpha Vantage ");
+        logger.info(Uri);
+    
+        ResponseEntity<Object> response = template.exchange(Uri, HttpMethod.GET, null, Object.class);
+        LinkedHashMap<String, LinkedHashMap<String, String>> linkedHashMapLinkedHashMap = (LinkedHashMap<String, LinkedHashMap<String, String>>) response.getBody();
+        
+        Gson gson = new Gson();
+        String jsonstring = gson.toJson(linkedHashMapLinkedHashMap.get("Time Series (60min)"),LinkedHashMap.class);
+
+        JSONParser myparser = new JSONParser();
+        JSONObject json = (JSONObject) myparser.parse(jsonstring);
+        return json;
+	
+	}
+
+	
+	
+	public JSONObject getCurrentPriceData(String sym) throws ParseException {
+		// TODO Auto-generated method stub
+		
+		
+		RestTemplate template = new RestTemplate();
+		 
+	    ticker = sym;
+	    
+        this.Uri = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&apikey=LQFNTUXD4K0LAPGJ&symbol=" + ticker; 
+        logger.info("Stock Exchange calls for current price to Alpha Vantage ");
+        logger.info(Uri);
+    
+        ResponseEntity<Object> response = template.exchange(Uri, HttpMethod.GET, null, Object.class);
+        LinkedHashMap<String, LinkedHashMap<String, String>> linkedHashMapLinkedHashMap = (LinkedHashMap<String, LinkedHashMap<String, String>>) response.getBody();
+        
+        Gson gson = new Gson();
+        String jsonstring = gson.toJson(linkedHashMapLinkedHashMap.get("Global Quote"),LinkedHashMap.class);
+
+        JSONParser myparser = new JSONParser();
+        JSONObject json = (JSONObject) myparser.parse(jsonstring);
+        return json;
+	
+	}
+	
+	
+
+}
